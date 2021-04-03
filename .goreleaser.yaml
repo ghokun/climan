@@ -47,5 +47,4 @@ archives:
       format: zip
     files:
       - README.md
-      - LICENSE.md
-      - completions/*
+      - LICENSE

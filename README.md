@@ -35,4 +35,5 @@ climan remove kubectl 1.20
 
 ```
 
-## All Commands
+## Development
+This repository contains `devcontainer` files that can be opened in Visual Studio Remote Containers.
