@@ -53,6 +53,7 @@ helm
 kustomize
 
 # Pipelines
+flux
 tkn
 argocd
 
