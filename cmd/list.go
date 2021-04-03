@@ -16,8 +16,10 @@ limitations under the License.
 package cmd
 
 import (
-	"fmt"
+	"os"
 
+	"github.com/ghokun/climan/cmd/tools"
+	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
 )
 
@@ -31,9 +33,8 @@ and usage of using your command. For example:
 Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("list called")
-	},
+	Run:     list,
+	Aliases: []string{"l", "li", "lis"},
 }
 
 func init() {
@@ -48,4 +49,34 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// listCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+}
+
+func list(cmd *cobra.Command, args []string) {
+	if len(args) > 0 {
+		listOne(args[0])
+	} else {
+		listAll()
+	}
+}
+
+func listOne(name string) {
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetAutoWrapText(false)
+	table.SetHeader([]string{"Tool", "Versions", "Status", "Path"})
+	tool := tools.Tools[name]
+	for _, version := range tool.List() {
+		table.Append([]string{"", version, "-", "/home/gokhun/.."})
+	}
+	table.Render()
+}
+
+func listAll() {
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetHeader([]string{"Tool", "Latest", "Current", "Description", "Type"})
+	table.SetAutoWrapText(false)
+
+	for _, tool := range tools.Tools {
+		table.Append([]string{tool.Name(), tool.Latest(), tool.Current(), tool.Description(), tool.Type()})
+	}
+	table.Render()
 }
