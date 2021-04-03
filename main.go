@@ -1,7 +1,7 @@
 package main
 
-import "fmt"
+import "github.com/ghokun/climan/cmd"
 
 func main() {
-	fmt.Println("Hello from climan!")
+	cmd.Execute()
 }
