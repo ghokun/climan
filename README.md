@@ -33,7 +33,34 @@ climan remove kubectl
 # Remove a specific version of a tool
 climan remove kubectl 1.20
 
+# Remove all versions of a tool
+climan remove kubectl --all
 ```
 
+## Tools
+```bash
+climan # Yes
+
+# API Clients
+kubectl
+oc
+kn
+kamel
+odo
+
+# Management
+helm
+kustomize
+
+# Pipelines
+tkn
+argocd
+
+# Distributions
+minikube
+kind
+k3d
+crc
+```
 ## Development
 This repository contains `devcontainer` files that can be opened in Visual Studio Remote Containers.
