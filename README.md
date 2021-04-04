@@ -39,7 +39,7 @@ climan remove kubectl --all
 
 ## Tools
 ```bash
-climan # Yes
+climan # Yes, you can download any version of this tool to manage itself
 
 # API Clients
 kubectl
