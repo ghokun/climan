@@ -38,6 +38,7 @@ to quickly create a Cobra application.`,
 }
 
 func init() {
+	listCmd.AddCommand()
 	rootCmd.AddCommand(listCmd)
 
 	// Here you will define your flags and configuration settings.
@@ -54,7 +55,7 @@ func init() {
 func list(cmd *cobra.Command, args []string) {
 
 
-	
+
 	if len(args) > 0 {
 		listOne(args[0])
 	} else {

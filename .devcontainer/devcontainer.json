@@ -50,12 +50,17 @@
             "editor.insertSpaces": true,
             "editor.tabSize": 4
         },
+        "[yaml]": {
+            "editor.insertSpaces": true,
+            "editor.tabSize": 2
+        },
         "debug.console.fontFamily": "'SF Mono', Monaco, Menlo, Consolas, 'Courier New', monospace",
         "debug.console.fontSize": 12,
         "diffEditor.ignoreTrimWhitespace": false,
         "diffEditor.renderSideBySide": false,
         "editor.cursorSmoothCaretAnimation": true,
         "editor.cursorStyle": "block",
+        "editor.detectIndentation": false,
         "editor.fontFamily": "'SF Mono', Monaco, Menlo, Consolas, 'Courier New', monospace",
         "editor.fontLigatures": false,
         "editor.fontSize": 12,
