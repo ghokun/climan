@@ -10,7 +10,14 @@
 
 ### Manual
 ```bash
-# Boring copy and paste
+# Download binary from releases page
+
+# Make it executable
+chmod +x climan
+./climan install climan
+
+# Add climan bin folder to your PATH
+export PATH="$HOME/.climan/bin:$PATH"
 ```
 
 ## Usage
