@@ -2,6 +2,10 @@
 
 `climan` is a command line tool version manager for cloud native technologies.
 
+- No root user is required
+- Switch between versions
+- Automatic install on first call
+
 ## Installation
 ### Automated
 ```bash
