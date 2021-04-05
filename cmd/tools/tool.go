@@ -24,3 +24,7 @@ const (
 var Tools = map[string]Tool{
 	"climan": Climan{},
 }
+
+func Install(tool string) {
+	Tools[tool].Install()
+}
