@@ -1,6 +1,8 @@
 package main
 
-import "github.com/ghokun/climan/cmd"
+import (
+	"github.com/ghokun/climan/cmd"
+)
 
 var (
 	version = "dev"

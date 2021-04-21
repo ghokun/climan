@@ -1,86 +1,107 @@
-/*
-Copyright © 2021 NAME HERE <EMAIL ADDRESS>
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
 package cmd
+
+// TODO find local installed version
+// TODO cache list all function
+// TODO load from cache-rotate cache
+// TODO fit results to screen
 
 import (
 	"os"
+	"sort"
+	"strings"
 
 	"github.com/ghokun/climan/cmd/tools"
 	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
 )
 
-// listCmd represents the list command
-var listCmd = &cobra.Command{
-	Use:   "list",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-	Run:     list,
-	Aliases: []string{"l", "li", "lis"},
-}
+var (
+	forceRemote       bool
+	includeUnreleased bool
+)
 
 func init() {
-	listCmd.AddCommand()
+	examples := `
+# List all tools
+climan list
+
+# List versions of kubectl
+climan list kubectl
+
+# List versions of oc
+climan list oc
+
+# List versions of helm but force remote call
+climan list helm --force-remote
+
+# List versions of kubectl including alpha, beta and release-candidates
+climan list kubectl -u`
+
+	validTools := make([]string, len(tools.Tools))
+	i := 0
+	for tool := range tools.Tools {
+		validTools[i] = tool
+		i++
+	}
+
+	listCmd := &cobra.Command{
+		Aliases:   []string{"l", "li", "lis"},
+		Args:      cobra.RangeArgs(0, 1),
+		Example:   examples,
+		Use:       "list",
+		Short:     "Lists all tools or versions of a tool",
+		Long:      "Lists all tools or versions of a tool",
+		RunE:      list,
+		ValidArgs: validTools,
+	}
+
+	listCmd.Flags().BoolVarP(&includeUnreleased, "include-unreleased", "u", false, "Includes alpha, beta and release candidates.")
+	listCmd.Flags().BoolVarP(&forceRemote, "force-remote", "f", false, "Force remote checking of versions instead of local cache")
 	rootCmd.AddCommand(listCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// listCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// listCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
-func list(cmd *cobra.Command, args []string) {
-
-
-
-	if len(args) > 0 {
-		listOne(args[0])
-	} else {
-		listAll()
+func list(cmd *cobra.Command, args []string) error {
+	if len(args) == 0 {
+		return listAllTools()
 	}
-}
-
-func listOne(name string) {
-	table := tablewriter.NewWriter(os.Stdout)
-	table.SetAutoWrapText(false)
-	table.SetHeader([]string{"Tool", "Versions", "Status", "Path"})
-	tool := tools.Tools[name]
-	for _, version := range tool.List() {
-		table.Append([]string{"", version, "-", "/home/gokhun/.."})
+	err := cobra.OnlyValidArgs(cmd, args)
+	if err != nil {
+		return err
 	}
-	table.Render()
+	return listTool(args[0])
 }
 
-func listAll() {
+func listAllTools() error {
 	table := tablewriter.NewWriter(os.Stdout)
-	table.SetHeader([]string{"Tool", "Latest", "Current", "Description", "Type"})
-	table.SetAutoWrapText(false)
-
+	table.SetHeader([]string{"Tool", "Latest", "Current"})
 	for _, tool := range tools.Tools {
-		table.Append([]string{tool.Name(), tool.Latest(), tool.Current(), tool.Description(), tool.Type()})
+		latest, err := tool.GetLatest()
+		if err != nil {
+			latest = tools.ToolVersion{Version: ""}
+		}
+		table.Append([]string{tool.Name, latest.Version, " "})
 	}
 	table.Render()
+	return nil
+}
+
+func listTool(name string) error {
+	tool := tools.Tools[name]
+	all, err := tool.GetAll()
+	if err != nil {
+		return err
+	}
+	sort.Sort(all)
+
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetHeader([]string{"Version", "Status"})
+
+	for _, version := range all {
+		if includeUnreleased || (!strings.Contains(version.Version, "alpha") && !strings.Contains(version.Version, "beta") && !strings.Contains(version.Version, "rc")) {
+			table.Append([]string{version.Version, ""})
+		}
+	}
+
+	table.Render()
+	return nil
 }

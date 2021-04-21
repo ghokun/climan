@@ -28,14 +28,24 @@ export PATH="$HOME/.climan/bin:$PATH"
 
 ## Usage
 ```bash
-# List all tools
+# Help
+climan help
+
+# List all tools (hit cache first, then remote)
 climan list
+
+# List all tools (only from remote)
+climan list --force-remote
 
 # List all  versions of a tool
 climan list kubectl
 
 # Install the latest version of a tool
+# Sets the latest version as default
 climan install kubectl
+
+# Install the latest version of a tool but don't set as default
+climan install kubectl --no-default
 
 # Install a specific version of a tool
 climan install kubectl 1.20
@@ -78,3 +88,5 @@ crc
 ```
 ## Development
 This repository contains `devcontainer` files that can be opened in Visual Studio Remote Containers.
+
+## TASKS

@@ -9,22 +9,15 @@ import (
 
 const (
 	logo = `
-█▀▀ █░░ █ █▀▄▀█ ▄▀█ █▄░█
-█▄▄ █▄▄ █ █░▀░█ █▀█ █░▀█
-
-Version : {{.Version}}
-Commit  : {{.Commit}}
-`
+█▀▀ █░░ █ █▀▄▀█ ▄▀█ █▄░█  Version : {{.Version}}
+█▄▄ █▄▄ █ █░▀░█ █▀█ █░▀█  Commit  : {{.Commit}}`
 	versionTemplate = `{{.Version}}
 `
-	examples = `  climan list
-  climan install kubectl`
 )
 
 var rootCmd = &cobra.Command{
-	Use:     "climan",
-	Short:   "CLI tools version MANager for cloud native technologies",
-	Example: examples,
+	Use:   "climan",
+	Short: "CLI tools version MANager for cloud native technologies",
 }
 
 func getLogo(version, commit string) string {
