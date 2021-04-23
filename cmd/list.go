@@ -4,6 +4,7 @@ package cmd
 // TODO cache list all function
 // TODO load from cache-rotate cache
 // TODO fit results to screen
+// TODO show no version found for empty list
 
 import (
 	"os"
@@ -11,6 +12,7 @@ import (
 	"strings"
 
 	"github.com/ghokun/climan/cmd/tools"
+	"github.com/ghokun/termdim"
 	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
 )
@@ -91,14 +93,54 @@ func listTool(name string) error {
 	if err != nil {
 		return err
 	}
-	sort.Sort(all)
-
 	table := tablewriter.NewWriter(os.Stdout)
-	table.SetHeader([]string{"Version", "Status"})
-
-	for _, version := range all {
-		if includeUnreleased || (!strings.Contains(version.Version, "alpha") && !strings.Contains(version.Version, "beta") && !strings.Contains(version.Version, "rc")) {
-			table.Append([]string{version.Version, ""})
+	if len(all) < 1 {
+		table.SetHeader([]string{name})
+		table.Append([]string{"No version found"})
+	} else {
+		width, height, err := termdim.GetSize(int(os.Stdout.Fd()))
+		if err != nil {
+			width = 80
+			height = 24
+		}
+		sort.Sort(all)
+		maxLength := len(name)
+		var filtered []string
+		for _, version := range all {
+			if includeUnreleased || (!strings.Contains(version.Version, "alpha") && !strings.Contains(version.Version, "beta") && !strings.Contains(version.Version, "rc")) {
+				if maxLength < len(version.Version) {
+					maxLength = len(version.Version)
+				}
+				filtered = append(filtered, version.Version)
+			}
+		}
+		if height > len(filtered) {
+			table.SetHeader([]string{name})
+			for _, row := range filtered {
+				table.Append([]string{row})
+			}
+		} else {
+			colNum := (width - 1) / (maxLength + 4)
+			header := make([]string, colNum)
+			header[0] = name
+			for i := 1; i < colNum; i++ {
+				header[i] = ""
+			}
+			table.SetHeader(header)
+			rowNum := len(filtered) / colNum
+			if rowNum*colNum < len(filtered) {
+				rowNum += 1
+			}
+			rows := make([][]string, rowNum)
+			for r := 0; r < rowNum; r++ {
+				rows[r] = make([]string, colNum)
+				for c := 0; c < colNum; c++ {
+					if c*rowNum+r < len(filtered) {
+						rows[r][c] = filtered[c*rowNum+r]
+					}
+				}
+			}
+			table.AppendBulk(rows)
 		}
 	}
 
