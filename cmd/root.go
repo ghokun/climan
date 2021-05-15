@@ -2,15 +2,16 @@ package cmd
 
 import (
 	"bytes"
+	"fmt"
 	"text/template"
 
 	"github.com/spf13/cobra"
 )
 
 const (
-	logo = `
-█▀▀ █░░ █ █▀▄▀█ ▄▀█ █▄░█  Version : {{.Version}}
-█▄▄ █▄▄ █ █░▀░█ █▀█ █░▀█  Commit  : {{.Commit}}`
+	logo = `█▀▀ █░░ █ █▀▄▀█ ▄▀█ █▄░█  Version : {{.Version}}
+█▄▄ █▄▄ █ █░▀░█ █▀█ █░▀█  Commit  : {{.Commit}}
+`
 	versionTemplate = `{{.Version}}
 `
 )
@@ -37,7 +38,11 @@ func getLogo(version, commit string) string {
 }
 
 func Execute(version, commit string) {
-	rootCmd.Long = getLogo(version, commit)
+	logoPrint := getLogo(version, commit)
+	rootCmd.PersistentPreRun = func(cmd *cobra.Command, args []string) {
+		fmt.Println(logoPrint)
+	}
+	rootCmd.Long = logoPrint
 	rootCmd.Version = version
 	rootCmd.SetVersionTemplate(versionTemplate)
 	cobra.CheckErr(rootCmd.Execute())
