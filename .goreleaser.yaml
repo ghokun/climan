@@ -38,6 +38,8 @@ builds:
     - -trimpath
   ldflags:
     - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}}
+  hooks:
+    post: /bin/sh shrink.sh
 checksum:
   name_template: '{{ .ProjectName }}-checksums.txt'
 changelog:
