@@ -16,6 +16,7 @@ jobs:
       - name: Setup upx
         run: |
           curl -LJ https://github.com/upx/upx/releases/download/v3.96/upx-3.96-amd64_linux.tar.xz | tar -xvJ upx-3.96-amd64_linux/upx --strip-components=1
+          mv upx /tmp/upx
       - name: GoReleaser
         uses: goreleaser/goreleaser-action@v1
         with:
