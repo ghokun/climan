@@ -1,3 +1,3 @@
 #!/bin/bash
 set -ex
-/tmp/upx dist/goreleaser*/goreleaser*
+/tmp/upx dist/climan*/climan*
